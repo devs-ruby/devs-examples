@@ -54,3 +54,9 @@ module DEVS
     end
   end
 end
+
+if __FILE__ == $0
+  require 'devs'
+  require 'devs/models'
+  DEVS::Examples::X2.run
+end

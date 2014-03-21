@@ -3,7 +3,7 @@ module DEVS
     module X2
       def run(formalism=:pdevs)
         DEVS.logger = Logger.new(STDOUT)
-        #DEVS.logger.level = Logger::INFO
+        DEVS.logger.level = Logger::INFO
 
         DEVS.simulate(formalism) do
           duration DEVS::INFINITY
@@ -58,5 +58,9 @@ end
 if __FILE__ == $0
   require 'devs'
   require 'devs/models'
+  begin
+    require 'devs/ext'
+  rescue LoadError
+  end
   DEVS::Examples::X2.run
 end

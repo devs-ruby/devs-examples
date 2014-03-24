@@ -1,6 +1,6 @@
 module DEVS
   module Examples
-    module X2
+    module Exponential
       def run(formalism=:pdevs)
         DEVS.logger = Logger.new(STDOUT)
         DEVS.logger.level = Logger::INFO
@@ -11,7 +11,7 @@ module DEVS
           add_model DEVS::Models::Generators::SequenceGenerator, with_args: [1, 20, 1], :name => :sequence
 
           add_model do
-            name 'x^x'
+            name '2^x'
             # reverse_confluent_transition!
 
             init do
@@ -22,7 +22,7 @@ module DEVS
             when_input_received do |messages|
               messages.each do |message|
                 value = message.payload
-                @result = value ** value
+                @result = 2 ** value
               end
               @sigma = 0
             end
@@ -39,15 +39,15 @@ module DEVS
             name :collector
 
             add_model DEVS::Models::Collectors::PlotCollector, :name => :plot
-            add_model DEVS::Models::Collectors::CSVCollector, :name => :csv
+            add_model DEVS::Models::Collectors::DatasetCollector, :name => :dataset
 
-            plug_input_port :a, with_children: ['csv@x', 'plot@x']
-            plug_input_port :b, with_children: ['csv@x^x', 'plot@x^x']
+            plug_input_port :a, with_children: ['dataset@x', 'plot@x']
+            plug_input_port :b, with_children: ['dataset@2^x', 'plot@2^x']
           end
 
-          plug 'sequence@value', with: 'x^x@in_1'
+          plug 'sequence@value', with: '2^x@in_1'
           plug 'sequence@value', with: 'collector@a'
-          plug 'x^x@out_1', with: 'collector@b'
+          plug '2^x@out_1', with: 'collector@b'
         end
       end
       module_function :run
@@ -62,5 +62,5 @@ if __FILE__ == $0
     require 'devs/ext'
   rescue LoadError
   end
-  DEVS::Examples::X2.run
+  DEVS::Examples::Exponential.run
 end
